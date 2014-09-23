@@ -1,0 +1,156 @@
+doctype html
+<!--[if IE 7]><html class="ie7" lang="en"><![endif]-->
+<!--[if IE 8]><html class="ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html class="ie9" lang="en"><![endif]-->
+<!--[if !IE]><!-->
+html(lang="en")
+    <!--<![endif]-->
+    head
+        meta(charset="utf-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        title new-ui
+        link(rel="shortcut icon" href="/favicon.ico")
+        link(href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css')
+        if dist
+            link(rel="stylesheet" href="/css/app.min.css")
+        else
+            link(rel="stylesheet" href="/css/app.css")
+    body#feed
+        .ui.large.inverted.vertical.sidebar.menu
+            a.active.item
+                | Dogs Weekly
+                span.ui.label 213
+              a.item
+                | Joystiq
+                span.ui.label 113
+              .item
+                b Archived Feeds
+                .menu
+                  a.item
+                    | Engadget
+                    span.ui.label 11
+                  a.item
+                    | NY Times Tech Blog
+                    span.ui.label 21
+              a.item
+                i.bookmark.icon
+                | Favorites
+              .ui.dropdown.item
+                i.add.icon
+                | New
+                .menu
+                  a.item
+                    i.rss.icon
+                    | Feed
+                  a.item
+                    i.tag.icon
+                    | Tag
+                  a.item
+                    i.folder.icon
+                    | Group
+
+
+        .ui.celled.grid
+            .seven.wide.middle.column
+                .ui.right.floated.black.launch.button
+                  i.list.layout.icon
+                  |  Menu
+                h2.ui.header
+                  i.inbox.icon
+                  | Inbox
+                .ui.tabular.filter.menu
+                  a.active.item(data-tab='unread') Unread
+                  a.item(data-tab='saved') Saved
+                  a.item(data-tab='all') All
+                .ui.divided.inbox.selection.list.active.tab(data-tab='unread')
+                  a.active.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 14, 2013
+                    .description Weekly Webcomic Wrapup fought the law, and the law won
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 14, 2013
+                    .description Scientists discover new breed of dog
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 10, 2013
+                    .description Dogs colony in Antarctica
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 09, 2013
+                    .description Famous dog whisperer Chakotay dies today at 104
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 07, 2013
+                    .description Top 10 Things to Know about Labradoodles
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 05, 2013
+                    .description Study shows children enjoy the company of animals
+                .ui.divided.inbox.selection.list.tab(data-tab='saved')
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 14, 2013
+                    .description Your favorite saved article
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 14, 2013
+                    .description Your favorite saved article
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.icon
+                    .right.floated.date Sep 14, 2013
+                    .description Your favorite saved article
+                .ui.divided.inbox.selection.list.tab(data-tab='all')
+                  a.item
+                    .left.floated.ui.star.rating
+                      i.link.icon
+                    .right.floated.date Sep 14, 2013
+                    .description There turns out there is only one article under all.
+                .ui.divider
+                .page
+                  | Showing
+                  b 6
+                  | of 213
+                .ui.pagination.menu
+                  a.icon.item
+                    i.icon.left.arrow
+                  a.active.item 1
+                  .disabled.item ...
+                  a.item 10
+                  a.item 11
+                  a.item 12
+                  a.icon.item
+                    i.icon.right.arrow
+              .nine.wide.right.column
+                h1.ui.header Weekly Webcomic Wrapup fought the law, and the law won
+                | Tags:
+                a.ui.teal.label Unread
+                a.ui.teal.label Comics
+                p
+                  | So there's this video game coming out Tuesday called Grand Theft Auto 5. Don't know if you've heard of it. Anyways, it's all about crime and gangs and some roughneck ne'er-do-wells, so I thought this would be the perfect time to talk about times when we've been... well, less than perfect.
+                p
+                  | When I was a young'un, I was a frequent visitor to the local swimming pool. I was also a frequent lover of AirHeads candy, which the pool happened to sell. Waiting, watching, stalking the counter like a big cat in the savannah, I waited for the perfect opportunity to strike. While the lifeguards were busy, I snuck through the gate, reached up and took both cherry and "mystery white" AirHeads. I quickly ran out to the sidewalk and reveled in my sweet, delicious victory... for all of ten seconds, before I felt guilty enough to sneak back in and return the .20 worth of candy I had stolen.
+                p
+                  | While you confess your crimes - hopefully minor, and nothing you can be persecuted for - take a moment to enjoy this week's webcomics, and vote for your favorite after the jump.
+                .ui.divider
+                .ui.basic.button Save
+                .ui.basic.button Delete
+
+
+
+
+        if dist
+            script(src='/js/bundle.min.js')
+        else
+            script(src='/js/vendor.js')
+            script(src='/js/app.js')

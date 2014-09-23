@@ -1,0 +1,27 @@
+{
+  "name": "new-ui",
+  "version": "0.0.0",
+  "homepage": "https://github.com/plasticut/new-ui",
+  "authors": [
+    "plasticut <plasticut@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.1.2",
+    "backbone-computedfields": "~0.0.7",
+    "jquery": "~2.1.1",
+    "semantic-ui": "~0.19.3",
+    "backbone.modelbinder": "~1.0.5",
+    "lodash": "~2.4.1",
+    "backbone-deep-model": "~0.10.4",
+    "jquery-address": "*"
+  }
+}

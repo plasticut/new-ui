@@ -7,6 +7,8 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('unpathify');
 
+    grunt.loadTasks('tasks');
+
     // var browserifyVendor = {
     //     alias: [
     //         __dirname + '/bower_components/jquery/dist/jquery.js:jquery',
@@ -442,6 +444,29 @@ module.exports = function(grunt) {
                         '.tmp',
                         'bower_components/semantic-ui/build/uncompressed'
                     ]
+                }
+            }
+        },
+
+        jst: {
+            myTemplates: {
+                files: [
+                    {
+                        src: [
+                            '**/*.ejs'
+                        ],
+                        dest: '.tmp/js/templates.js',
+                        cwd: 'lib/ui/default/templates'
+                    }
+                ],
+                options: {
+                    namespace: 'Backbone.Templates',
+                    prettify: true,
+                    processName: function(name) {
+                        name = name.split('.');
+                        name.pop();
+                        return name.join('.');
+                    }
                 }
             }
         }

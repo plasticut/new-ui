@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
     var _ = require('grunt-browserify/node_modules/lodash');
+    var path = require('path');
 
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
@@ -448,26 +449,26 @@ module.exports = function(grunt) {
             }
         },
 
-        jst: {
-            myTemplates: {
-                files: [
-                    {
-                        src: [
-                            '**/*.ejs'
-                        ],
-                        dest: '.tmp/js/templates.js',
-                        cwd: 'lib/ui/default/templates'
-                    }
-                ],
+        handlebars: {
+            compile: {
                 options: {
                     namespace: 'Backbone.Templates',
-                    prettify: true,
-                    processName: function(name) {
-                        name = name.split('.');
-                        name.pop();
-                        return name.join('.');
+                    // commonjs: true,
+                    processName: function(filePath) {
+                        return path.basename(path.relative('lib/ui/default/templates', filePath), '.hbs');
                     }
+                },
+                files: {
+                    '.tmp/js/templates.js': [
+                        'lib/ui/default/templates/**/*.hbs'
+                    ]
                 }
+            }
+        },
+
+        jsbeautifier : {
+            files : ['.tmp/js/templates.js'],
+            options : {
             }
         }
     });

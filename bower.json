@@ -22,6 +22,7 @@
     "backbone.modelbinder": "~1.0.5",
     "lodash": "~2.4.1",
     "backbone-deep-model": "~0.10.4",
-    "jquery-address": "*"
+    "jquery-address": "*",
+    "handlebars": "~2.0.0"
   }
 }

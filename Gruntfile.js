@@ -10,63 +10,17 @@ module.exports = function(grunt) {
 
     grunt.loadTasks('tasks');
 
-    // var browserifyVendor = {
-    //     alias: [
-    //         __dirname + '/bower_components/jquery/dist/jquery.js:jquery',
-    //         __dirname + '/bower_components/backbone/backbone.js:backbone',
-    //         __dirname + '/bower_components/lodash/dist/lodash.underscore.js:underscore',
-    //         __dirname + '/bower_components/backbone-deep-model/src/deep-model.js:backbone.deepmodel',
-    //         __dirname + '/bower_components/backbone.modelbinder/Backbone.ModelBinder.js:backbone.modelbinder',
-    //         __dirname + '/bower_components/backbone.modelbinder/Backbone.CollectionBinder.js:backbone.collectionbinder'
-    //     ],
-    //     require: [
-    //     ],
-    //     preBundleCB: function (browserify) {
-    //         browserify.plugin(require('remapify'), [
-    //             {
-    //                 src: '**/*.js',
-    //                 cwd: 'bower_components/semantic-ui/npm/modules',
-    //                 expose: 'semantic-ui'
-    //             }
-    //         ]);
-    //         browserify.transform(require('./tasks/browserify-wrap')({
-    //             'Backbone.ModelBinder.js': {
-    //                 jquery: 'jQuery',
-    //                 underscore: '_',
-    //                 backbone: 'Backbone'
-    //             },
-    //             'Backbone.CollectionBinder.js': {
-    //                 jquery: 'jQuery',
-    //                 underscore: '_',
-    //                 backbone: 'Backbone'
-    //             },
-    //             'deep-model.js': {
-    //                 jquery: 'jQuery',
-    //                 underscore: '_',
-    //                 backbone: 'Backbone'
-    //             }
-    //         }));
-    //     }
-    // };
-
-    // var browserifyScripts = {
-    //      external: [
-    //         'jquery',
-    //         'backbone',
-    //         'backbone.deepmodel',
-    //         'backbone.modelbinder',
-    //         'backbone.collectionbinder'
-    //     ]
-    // };
-
     var vendorScripts = [
+        'bower_components/handlebars/handlebars.js',
+
         'bower_components/jquery/dist/jquery.js',
         'bower_components/lodash/dist/lodash.underscore.js',
         'bower_components/backbone/backbone.js',
 
-        // 'bower_components/backbone-computed/dist/backbone-computed.js',
-        'bower_components/backbone-computedfields/lib/backbone-computedfields.js',
 
+        'bower_components/backbone-computedfields/lib/backbone.computedfields.js',
+
+        'bower_components/backbone-deep-model/lib/underscore.mixin.deepExtend.js',
         'bower_components/backbone-deep-model/src/deep-model.js',
 
         'bower_components/backbone.modelbinder/Backbone.ModelBinder.js',
@@ -125,12 +79,12 @@ module.exports = function(grunt) {
             options: {
             },
 
-            dev: {
+            'vendor-dev': {
                 src: vendorScripts,
                 dest: '.tmp/js/vendor.js'
             },
 
-            dist: {
+            'vendor-dist': {
                 src: vendorScripts,
                 dest: 'dist/public/js/vendor.js'
             }
@@ -140,21 +94,78 @@ module.exports = function(grunt) {
             options: {
             },
 
-            dev: {
+            'scripts-dev': {
                 options: {
+                    alias: [
+                        __dirname + '/lib/app/index.js:app'
+                    ],
+                    preBundleCB: function (b) {
+                        b.plugin(require('remapify'), [
+                            {
+                                src: '**/*.js',
+                                cwd: 'lib/app/views',
+                                expose: 'views'
+                            },
+                            {
+                                src: '**/*.js',
+                                cwd: 'lib/app/controllers',
+                                expose: 'controllers'
+                            },
+                            {
+                                src: '**/*.js',
+                                cwd: 'lib/app/models',
+                                expose: 'models'
+                            },
+                            {
+                                src: '**/*.js',
+                                cwd: 'lib/app/base',
+                                expose: 'base'
+                            }
+                        ]);
+                    },
                     browserifyOptions: {
                         debug: true
-                    }
+                    },
+                    external: [
+                        'templates',
+                        'handlebars'
+                    ]
                 },
                 src: ['lib/app/index.js'],
                 dest: '.tmp/js/app.js'
             },
 
-            dist: {
+            'scripts-dist': {
                 options: {
+                    external: [
+                        'handlebars'
+                    ]
                 },
                 src: ['lib/app/index.js'],
                 dest: 'dist/public/js/app.js'
+            },
+
+            'templates-dev': {
+                options: {
+                    browserifyOptions: {
+                        debug: true
+                    },
+                    alias: [
+                         __dirname + '/.tmp/js/templates.js:templates'
+                    ]
+                },
+                src: [],
+                dest: '.tmp/js/templates.js'
+            },
+
+            'templates-dist': {
+                options: {
+                    alias: [
+                         __dirname + '/dist/public/js/templates.js:templates'
+                    ]
+                },
+                src: [],
+                dest: 'dist/public/js/templates.js'
             }
         },
 
@@ -176,6 +187,7 @@ module.exports = function(grunt) {
                 files: {
                     'dist/public/js/bundle.min.js': [
                         'dist/public/js/vendor.js',
+                        'dist/public/js/templates.js',
                         'dist/public/js/app.js'
                     ]
                 }
@@ -279,6 +291,45 @@ module.exports = function(grunt) {
 
         /*
 
+            TEMPLATES
+
+        */
+        handlebars: {
+            'templates-dev': {
+                options: {
+                    namespace: false,
+                    commonjs: true,
+                    wrapped: true,
+                    processName: function(filePath) {
+                        return path.basename(path.relative('lib/ui/default/templates', filePath), '.hbs');
+                    }
+                },
+                files: {
+                    '.tmp/js/templates.js': [
+                        'lib/ui/default/templates/**/*.hbs'
+                    ]
+                }
+            },
+            'templates-dist': {
+                options: {
+                    namespace: false,
+                    commonjs: true,
+                    wrapped: true,
+                    processName: function(filePath) {
+                        return path.basename(path.relative('lib/ui/default/templates', filePath), '.hbs');
+                    }
+                },
+                files: {
+                    'dist/public/js/templates.js': [
+                        'lib/ui/default/templates/**/*.hbs'
+                    ]
+                }
+            }
+        },
+
+
+        /*
+
             ASSETS
 
         */
@@ -348,7 +399,7 @@ module.exports = function(grunt) {
                 tasks: [
                     'jshint',
                     'notify:jshint',
-                    'browserify:dev'
+                    'browserify:scripts-dev'
                 ]
             },
             styles: {
@@ -357,6 +408,14 @@ module.exports = function(grunt) {
                 ],
                 tasks: [
                     'styles-dev'
+                ]
+            },
+            templates: {
+                files: [
+                    'lib/ui/default/templates/**/*.hbs'
+                ],
+                tasks: [
+                    'templates-dev'
                 ]
             },
             views: {
@@ -430,6 +489,7 @@ module.exports = function(grunt) {
                 }
             }
         },
+
         clean: {
             dist: [ 'dist/' ],
             dev: [ '.tmp/' ]
@@ -449,26 +509,11 @@ module.exports = function(grunt) {
             }
         },
 
-        handlebars: {
-            compile: {
-                options: {
-                    namespace: 'Backbone.Templates',
-                    // commonjs: true,
-                    processName: function(filePath) {
-                        return path.basename(path.relative('lib/ui/default/templates', filePath), '.hbs');
-                    }
-                },
-                files: {
-                    '.tmp/js/templates.js': [
-                        'lib/ui/default/templates/**/*.hbs'
-                    ]
-                }
-            }
-        },
-
         jsbeautifier : {
-            files : ['.tmp/js/templates.js'],
             options : {
+            },
+            'templates-dev': {
+                src : ['.tmp/js/templates.js']
             }
         }
     });
@@ -484,18 +529,21 @@ module.exports = function(grunt) {
     /*
         Helper tasks
     */
+
+    /* SCRIPTS */
     grunt.registerTask('scripts-dev', [
-        'concat:dev',
-        'browserify:dev'
+        'concat:vendor-dev',
+        'browserify:scripts-dev'
     ]);
 
     grunt.registerTask('scripts-dist', [
-        'concat:dist',
-        'browserify:dist',
+        'concat:vendor-dist',
+        'browserify:scripts-dist',
         'unpathify:dist',
         'uglify:dist'
     ]);
 
+    /* STYLES */
     grunt.registerTask('styles-dev', [
         'stylus:dev'
         // 'autoprefixer:dev',
@@ -509,8 +557,22 @@ module.exports = function(grunt) {
         // 'cssmin:dist'
     ]);
 
+
+    /* TEMPLATES */
+    grunt.registerTask('templates-dev', [
+        'handlebars:templates-dev',
+        'browserify:templates-dev',
+        'jsbeautifier:templates-dev'
+    ]);
+
+    grunt.registerTask('templates-dist', [
+        'handlebars:templates-dist',
+        'browserify:templates-dist'
+    ]);
+
+    /* VIEWS */
     grunt.registerTask('views-dev', [
-        'jade:dev'
+        'jade:dev',
     ]);
 
     grunt.registerTask('views-dist', [
@@ -523,6 +585,7 @@ module.exports = function(grunt) {
     grunt.registerTask('dev', [
         'jshint',
         'clean:dev',
+        'templates-dev',
         'scripts-dev',
         'styles-dev',
         'views-dev',
@@ -532,6 +595,7 @@ module.exports = function(grunt) {
     grunt.registerTask('dist', [
         'jshint',
         'clean:dist',
+        'templates-dist',
         'scripts-dist',
         'styles-dist',
         'views-dist',

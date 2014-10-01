@@ -8,6 +8,11 @@ npm install
 npm start
 ```
 
+_generate and serve api documentation_:
+```shell
+npm docs
+```
+
 _components_:
 * lodash
 * jquery
@@ -21,3 +26,4 @@ _features_:
 * browserify modules
 * style preprocessor stylus with nib
 * livereload
+* JSDoc 3 - API documentation generator http://usejsdoc.org/

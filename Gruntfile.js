@@ -49,7 +49,8 @@ module.exports = function(grunt) {
         server: {
             host: 'localhost',
             port: 9000,
-            livereload: 9999
+            livereload: 9999,
+            docs: 9090
         },
 
 
@@ -564,8 +565,18 @@ module.exports = function(grunt) {
                     port: '<%= server.port %>',
                     livereload: '<%= server.livereload %>',
                     base: [
-                        '.tmp',
-                        'bower_components/semantic-ui/build/uncompressed'
+                        '.tmp'
+                    ]
+                }
+            },
+            docs: {
+                options: {
+                    hostname: '<%= server.host %>',
+                    port: '<%= server.docs %>',
+                    open: true,
+                    keepalive: true,
+                    base: [
+                        'doc'
                     ]
                 }
             }
@@ -576,6 +587,15 @@ module.exports = function(grunt) {
             },
             'templates-dev': {
                 src : ['.tmp/js/templates.js']
+            }
+        },
+
+        jsdoc : {
+            dist : {
+                src: ['lib/**/*.js', 'test/**/*.js'],
+                options: {
+                    destination: 'doc'
+                }
             }
         }
     });
@@ -665,6 +685,12 @@ module.exports = function(grunt) {
         'views-dist',
         'copy:dist'
     ]);
+
+    grunt.registerTask('docs', [
+        'jsdoc',
+        'connect:docs'
+    ]);
+
 
     grunt.registerTask('default', [
         'dev',

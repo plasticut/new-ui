@@ -17,7 +17,6 @@ module.exports = function(grunt) {
         'bower_components/lodash/dist/lodash.underscore.js',
         'bower_components/backbone/backbone.js',
 
-
         'bower_components/backbone-computedfields/lib/backbone.computedfields.js',
 
         'bower_components/backbone-deep-model/lib/underscore.mixin.deepExtend.js',
@@ -26,27 +25,21 @@ module.exports = function(grunt) {
         'bower_components/backbone.modelbinder/Backbone.ModelBinder.js',
         'bower_components/backbone.modelbinder/Backbone.CollectionBinder.js',
 
-        'bower_components/jquery-address/src/jquery.address.js',
+        'bower_components/nicescroll/jquery.nicescroll.js',
 
-        'bower_components/semantic-ui/build/uncompressed/modules/accordion.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/chatroom.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/checkbox.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/dimmer.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/dropdown.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/modal.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/nag.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/popup.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/rating.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/search.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/shape.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/sidebar.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/tab.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/transition.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/video.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/behavior/api.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/behavior/colorize.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/behavior/form.js',
-        'bower_components/semantic-ui/build/uncompressed/modules/behavior/state.js'
+        /* BOOTSTRAP */
+        'bower_components/bootstrap/js/affix.js',
+        'bower_components/bootstrap/js/alert.js',
+        'bower_components/bootstrap/js/button.js',
+        'bower_components/bootstrap/js/carousel.js',
+        'bower_components/bootstrap/js/collapse.js',
+        'bower_components/bootstrap/js/dropdown.js',
+        'bower_components/bootstrap/js/modal.js',
+        'bower_components/bootstrap/js/tooltip.js',
+        'bower_components/bootstrap/js/popover.js',
+        'bower_components/bootstrap/js/scrollspy.js',
+        'bower_components/bootstrap/js/tab.js',
+        'bower_components/bootstrap/js/transition.js'
     ];
 
     grunt.initConfig({
@@ -200,43 +193,105 @@ module.exports = function(grunt) {
             STYLES
 
         */
-        stylus: {
-            options: {
-                'include css': true,
-                paths: [
-                    'bower_components/semantic-ui/build/uncompressed'
-                    // 'path/to/import', 'another/to/import'
-                ],
-                urlfunc: 'embedurl', // use embedurl('test.png') in our code to trigger Data URI embedding
-                use: [
-                ],
-                import: [
-                    //  @import 'foo', 'bar/moo', etc. into every .styl file
-                    //  that is compiled. These might be findable based on values you gave
-                    //  to `paths`, or a plugin you added under `use`
-                ]
-            },
-
+        less: {
             dev: {
                 options: {
-                    compress: false
+                    strictMath: true,
+                    outputSourceFiles: true,
+                    sourceMap: true,
+                    sourceMapURL: 'css/app.css.map',
+                    sourceMapFilename: '.tmp/css/app.css.map',
+                    paths: [
+                        'bower_components'
+                    ]
                 },
                 files: {
-                    '.tmp/css/app.css': [
-                        'lib/ui/default/styles/app.styl'
-                    ]
+                    '.tmp/css/app.css': 'lib/ui/default/styles/app.less'
                 }
             },
-
             dist: {
                 options: {
-                    compress: true
+                    compress: true,
+                    strictMath: true,
+                    paths: [
+                        'bower_components'
+                    ]
                 },
                 files: {
                     'dist/public/css/app.css': [
-                        'lib/ui/default/styles/app.styl'
+                        'lib/ui/default/styles/app.less'
                     ]
                 }
+            }
+        },
+
+        autoprefixer: {
+            options: {
+                browsers: [
+                    'Android 2.3',
+                    'Android >= 4',
+                    'Chrome >= 20',
+                    'Firefox >= 24', // Firefox 24 is the latest ESR
+                    'Explorer >= 8',
+                    'iOS >= 6',
+                    'Opera >= 12',
+                    'Safari >= 6'
+                ]
+            },
+            dev: {
+                options: {
+                    map: true
+                },
+                src: '.tmp/css/app.css'
+            },
+            dist: {
+                options: {
+                    map: true
+                },
+                src: 'dist/public/css/app.css'
+            }
+        },
+
+        csslint: {
+            options: {
+                csslintrc: 'lib/ui/default/styles/.csslintrc'
+            },
+            dev: {
+                src: '.tmp/css/app.css'
+            },
+            dist: {
+                src: 'dist/public/css/app.css'
+            }
+        },
+
+        cssmin: {
+            options: {
+                compatibility: 'ie8',
+                keepSpecialComments: '*',
+                noAdvanced: true
+            },
+            dist: {
+                files: {
+                    'dist/public/css/app.min.css': 'dist/public/css/app.css'
+                }
+            }
+        },
+
+        csscomb: {
+            options: {
+                config: 'lib/ui/default/styles/.csscomb.json'
+            },
+            dev: {
+                expand: true,
+                cwd: '.tmp/css/',
+                src: ['*.css', '!*.min.css'],
+                dest: '.tmp/css/'
+            },
+            dist: {
+                expand: true,
+                cwd: 'dist/public/css/',
+                src: ['*.css', '!*.min.css'],
+                dest: 'dist/public/css/'
             }
         },
 
@@ -404,10 +459,12 @@ module.exports = function(grunt) {
             },
             styles: {
                 files: [
-                    'lib/ui/**/*.styl'
+                    'lib/ui/**/*.less'
                 ],
                 tasks: [
-                    'styles-dev'
+                    'styles-dev',
+                    'csslint:dev',
+                    'notify:csslint'
                 ]
             },
             templates: {
@@ -485,7 +542,12 @@ module.exports = function(grunt) {
         notify: {
             jshint: {
                 options: {
-                    message: 'JSHint: ok!'
+                    message: 'JS: ok!'
+                }
+            },
+            csslint: {
+                options: {
+                    message: 'CSS: ok!'
                 }
             }
         },
@@ -545,16 +607,16 @@ module.exports = function(grunt) {
 
     /* STYLES */
     grunt.registerTask('styles-dev', [
-        'stylus:dev'
-        // 'autoprefixer:dev',
-        // 'csscomb:dev'
+        'less:dev',
+        'autoprefixer:dev',
+        'csscomb:dev'
     ]);
 
     grunt.registerTask('styles-dist', [
-        'stylus:dist'
-        // 'autoprefixer:dist',
-        // 'csscomb:dist',
-        // 'cssmin:dist'
+        'less:dist',
+        'autoprefixer:dist',
+        'csscomb:dist',
+        'cssmin:dist'
     ]);
 
 
@@ -585,9 +647,10 @@ module.exports = function(grunt) {
     grunt.registerTask('dev', [
         'jshint',
         'clean:dev',
+        'styles-dev',
+        'csslint:dev',
         'templates-dev',
         'scripts-dev',
-        'styles-dev',
         'views-dev',
         'copy:dev'
     ]);
@@ -595,9 +658,10 @@ module.exports = function(grunt) {
     grunt.registerTask('dist', [
         'jshint',
         'clean:dist',
+        'styles-dist',
+        'csslint:dist',
         'templates-dist',
         'scripts-dist',
-        'styles-dist',
         'views-dist',
         'copy:dist'
     ]);

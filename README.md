@@ -15,9 +15,9 @@ _components_:
 * backbone.modelbinder
 * backbone-computedfields
 * backbone-deep-model
-* semantic-ui
+* bootstrap
 
 _features_:
 * browserify modules
-* style preprocessor stylus with nib
+* style preprocessor less + autoprefixer + csscomb
 * livereload

@@ -2,17 +2,44 @@ module.exports = function(grunt) {
 
     var _ = require('grunt-browserify/node_modules/lodash');
     var path = require('path');
-
     require('time-grunt')(grunt);
     require('load-grunt-tasks')(grunt);
 
     grunt.loadNpmTasks('unpathify');
+    grunt.loadNpmTasks('grunt-mocha');
+    grunt.loadNpmTasks('grunt-mocha-test');
+    grunt.loadNpmTasks('grunt-contrib-testem');
+    grunt.loadNpmTasks('grunt-blanket');
 
     grunt.loadTasks('tasks');
 
+    var remapify = [
+        {
+            src: '**/*.js',
+            cwd: 'lib/app/views',
+            expose: 'views'
+        },
+        {
+            src: '**/*.js',
+            cwd: 'lib/app/controllers',
+            expose: 'controllers'
+        },
+        {
+            src: '**/*.js',
+            cwd: 'lib/app/models',
+            expose: 'models'
+        },
+        {
+            src: '**/*.js',
+            cwd: 'lib/app/base',
+            expose: 'base'
+        }
+    ];
+
+
+
     var vendorScripts = [
         'bower_components/handlebars/handlebars.js',
-
         'bower_components/jquery/dist/jquery.js',
         'bower_components/lodash/dist/lodash.underscore.js',
         'bower_components/backbone/backbone.js',
@@ -39,7 +66,7 @@ module.exports = function(grunt) {
         'bower_components/bootstrap/js/popover.js',
         'bower_components/bootstrap/js/scrollspy.js',
         'bower_components/bootstrap/js/tab.js',
-        'bower_components/bootstrap/js/transition.js'
+        'bower_components/bootstrap/js/transition.js',
     ];
 
     grunt.initConfig({
@@ -81,6 +108,11 @@ module.exports = function(grunt) {
             'vendor-dist': {
                 src: vendorScripts,
                 dest: 'dist/public/js/vendor.js'
+            },
+
+            'vendor-tests': {
+                src: vendorScripts,
+                dest: 'test/vendor.js'
             }
         },
 
@@ -94,28 +126,7 @@ module.exports = function(grunt) {
                         __dirname + '/lib/app/index.js:app'
                     ],
                     preBundleCB: function (b) {
-                        b.plugin(require('remapify'), [
-                            {
-                                src: '**/*.js',
-                                cwd: 'lib/app/views',
-                                expose: 'views'
-                            },
-                            {
-                                src: '**/*.js',
-                                cwd: 'lib/app/controllers',
-                                expose: 'controllers'
-                            },
-                            {
-                                src: '**/*.js',
-                                cwd: 'lib/app/models',
-                                expose: 'models'
-                            },
-                            {
-                                src: '**/*.js',
-                                cwd: 'lib/app/base',
-                                expose: 'base'
-                            }
-                        ]);
+                        b.plugin(require('remapify'), remapify);
                     },
                     browserifyOptions: {
                         debug: true
@@ -127,6 +138,40 @@ module.exports = function(grunt) {
                 },
                 src: ['lib/app/index.js'],
                 dest: '.tmp/js/app.js'
+            },
+
+            'scripts-tests':{
+                options: {
+                    preBundleCB: function (b) {
+                        b.plugin(require('remapify'), [
+                            {
+                                src: '**/*.js',
+                                cwd: '.tmp/lib-cov/app/views',
+                                expose: 'views'
+                            },
+                            {
+                                src: '**/*.js',
+                                cwd: '.tmp/lib-cov/app/controllers',
+                                expose: 'controllers'
+                            },
+                            {
+                                src: '**/*.js',
+                                cwd: '.tmp/lib-cov/app/models',
+                                expose: 'models'
+                            },
+                            {
+                                src: '**/*.js',
+                                cwd: '.tmp/lib-cov/app/base',
+                                expose: 'base'
+                            }
+                        ]);
+                    },
+                    browserifyOptions: {
+                        debug: true
+                    }
+                },
+                src: ['test/**/*.js'],
+                dest: 'test/bundle.js'
             },
 
             'scripts-dist': {
@@ -487,10 +532,9 @@ module.exports = function(grunt) {
         },
 
         /*
-
             TEST
-
         */
+
         // mochaTest: {
         //     test: {
         //         options: {
@@ -528,11 +572,40 @@ module.exports = function(grunt) {
         //     }
         // }
 
+        blanket: {
+            cov:{
+                options: {},
+                files: {
+                   '.tmp/lib-cov/': ['lib/'],
+                }
+            }
+        },
+
+        testem: {
+            simple: {
+                src: [
+                    'bower_components/chai/chai.js',
+                    'bower_components/sinonjs/sinon.js',
+                    'test/vendor.js',
+                    'test/bundle.js'
+                ],
+                options: {
+                    framework: 'mocha',
+                    launchers: {
+                        cov:{
+                            command: "node_modules/mocha-phantomjs/bin/mocha-phantomjs -R json-cov test/test-cov.html | node_modules/json2htmlcov/bin/json2htmlcov > test/cover.html"
+                        }
+                    },
+                    launch_in_dev: ['Firefox', 'cov'],
+                    launch_in_ci: ['Firefox']
+                }
+            }
+        },
+
         /*
-
             UTILS
-
         */
+
         notify_hooks: {
             options: {
                 enabled: true,
@@ -551,11 +624,17 @@ module.exports = function(grunt) {
                     message: 'CSS: ok!'
                 }
             }
+            ,tests: {
+                options: {
+                    message: 'Tests passed'
+                }
+            }
         },
 
         clean: {
             dist: [ 'dist/' ],
-            dev: [ '.tmp/' ]
+            dev: [ '.tmp/' ],
+            tests: ['test/bundle.js', 'test/vendor.js', '.tmp/lib-cov/', 'test/cover.html'],
         },
 
         connect: {
@@ -616,6 +695,14 @@ module.exports = function(grunt) {
     grunt.registerTask('scripts-dev', [
         'concat:vendor-dev',
         'browserify:scripts-dev'
+    ]);
+
+
+    grunt.registerTask('scripts-tests', [
+        'clean:tests',
+        'blanket',
+        'browserify:scripts-tests',
+        'concat:vendor-tests',
     ]);
 
     grunt.registerTask('scripts-dist', [
@@ -689,6 +776,12 @@ module.exports = function(grunt) {
     grunt.registerTask('docs', [
         'jsdoc',
         'connect:docs'
+    ]);
+
+
+    grunt.registerTask('tests', [
+        'scripts-tests',
+        'testem:run:simple',
     ]);
 
 

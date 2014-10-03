@@ -2,18 +2,18 @@
 <head>
   <meta charset="utf-8">
   <title>Mocha Tests</title>
-  <link rel="stylesheet" href="../bower_components/mocha/mocha.css" />
+  <link rel="stylesheet" href="../node_modules/mocha-phantomjs/node_modules/mocha/mocha.css" />
 </head>
 <body>
   <div id="mocha"></div>
-  <script src="../.tmp/js/vendor.js"></script>
+  <script src="../.tmp/test/vendor.js"></script>
   <script src="../node_modules/mocha-phantomjs/node_modules/mocha/mocha.js"></script>
   <script src="../bower_components/chai/chai.js"></script>
   <script src="../bower_components/sinonjs/sinon.js"></script>
   <script>mocha.setup('bdd')</script>
 
   <!--Model Tests-->
-  <script type="text/javascript" src = "bundle.js"></script>
+  <script src = "../.tmp/test/bundle.js"></script>
   <script>
     var expect = chai.expect;
     mocha.globals(['jQuery']);

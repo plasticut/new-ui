@@ -6,8 +6,6 @@ module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
 
     grunt.loadNpmTasks('unpathify');
-    grunt.loadNpmTasks('grunt-mocha');
-    grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-testem');
     grunt.loadNpmTasks('grunt-blanket');
 
@@ -112,7 +110,7 @@ module.exports = function(grunt) {
 
             'vendor-tests': {
                 src: vendorScripts,
-                dest: 'test/vendor.js'
+                dest: '.tmp/test/vendor.js'
             }
         },
 
@@ -171,7 +169,7 @@ module.exports = function(grunt) {
                     }
                 },
                 src: ['test/**/*.js'],
-                dest: 'test/bundle.js'
+                dest: '.tmp/test/bundle.js'
             },
 
             'scripts-dist': {
@@ -586,17 +584,17 @@ module.exports = function(grunt) {
                 src: [
                     'bower_components/chai/chai.js',
                     'bower_components/sinonjs/sinon.js',
-                    'test/vendor.js',
-                    'test/bundle.js'
+                    '.tmp/test/vendor.js',
+                    '.tmp/test/bundle.js'
                 ],
                 options: {
                     framework: 'mocha',
                     launchers: {
-                        cov:{
-                            command: "node_modules/mocha-phantomjs/bin/mocha-phantomjs -R json-cov test/test-cov.html | node_modules/json2htmlcov/bin/json2htmlcov > test/cover.html"
+                        coverage:{
+                            command: "node_modules/mocha-phantomjs/bin/mocha-phantomjs -R json-cov test/test-cov.html | node_modules/json2htmlcov/bin/json2htmlcov > coverage.html"
                         }
                     },
-                    launch_in_dev: ['Firefox', 'cov'],
+                    launch_in_dev: ['Firefox', 'coverage'],
                     launch_in_ci: ['Firefox']
                 }
             }
@@ -634,7 +632,7 @@ module.exports = function(grunt) {
         clean: {
             dist: [ 'dist/' ],
             dev: [ '.tmp/' ],
-            tests: ['test/bundle.js', 'test/vendor.js', '.tmp/lib-cov/', 'test/cover.html'],
+            tests: ['.tmp/test/bundle.js', '.tmp/test/vendor.js', '.tmp/lib-cov/', 'coverage.html'],
         },
 
         connect: {

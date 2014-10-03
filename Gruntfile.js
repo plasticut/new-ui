@@ -148,6 +148,22 @@ module.exports = function(grunt) {
             'scripts-tests':{
                 options: {
                     preBundleCB: function (b) {
+                        b.plugin(require('remapify'), remapify);
+                    },
+                    browserifyOptions: {
+                        debug: true
+                    },
+                    external: [
+                        'templates',
+                        'handlebars'
+                    ]
+                },
+                src: ['test/**/*.js'],
+                dest: '.tmp/test/bundle.js'
+            },
+            'scripts-coverage':{
+                options: {
+                    preBundleCB: function (b) {
                         b.plugin(require('remapify'), [
                             {
                                 src: '**/*.js',
@@ -180,9 +196,8 @@ module.exports = function(grunt) {
                     ]
                 },
                 src: ['test/**/*.js'],
-                dest: '.tmp/test/bundle.js'
+                dest: '.tmp/test/instrumented.js'
             },
-
             'scripts-dist': {
                 options: {
                     external: [
@@ -598,7 +613,22 @@ module.exports = function(grunt) {
         },
 
         testem: {
-            simple: {
+            dev: {
+                src: [
+                    'bower_components/chai/chai.js',
+                    'bower_components/sinonjs/sinon.js',
+                    '.tmp/test/vendor.js',
+                    '.tmp/test/templates.js',
+                    '.tmp/test/bundle.js'
+                ],
+                options: {
+                    framework: 'mocha',
+                    launch_in_dev: ['chrome'],
+                    launch_in_ci: ['chrome']
+                }
+            },
+
+            coverage: {
                 src: [
                     'bower_components/chai/chai.js',
                     'bower_components/sinonjs/sinon.js',
@@ -613,8 +643,8 @@ module.exports = function(grunt) {
                             command: "node_modules/mocha-phantomjs/bin/mocha-phantomjs -R json-cov test/test-cov.html | node_modules/json2htmlcov/bin/json2htmlcov > coverage.html"
                         }
                     },
-                    launch_in_dev: ['chrome', 'coverage'],
-                    launch_in_ci: ['Firefox']
+                    launch_in_dev: ['coverage'],
+                    launch_in_ci: ['coverage']
                 }
             }
         },
@@ -651,7 +681,8 @@ module.exports = function(grunt) {
         clean: {
             dist: [ 'dist/' ],
             dev: [ '.tmp/' ],
-            tests: ['.tmp/test/', '.tmp/lib-cov/', 'coverage.html'],
+            tests: ['.tmp/test/',  'coverage.html'],
+            coverage: ['.tmp/test/lib-cov/', '.tmp/test/instrumented.js']
         },
 
         connect: {
@@ -716,8 +747,13 @@ module.exports = function(grunt) {
 
 
     grunt.registerTask('scripts-tests', [
-        'blanket',
         'browserify:scripts-tests'
+    ]);
+
+
+    grunt.registerTask('scripts-coverage', [
+        'blanket',
+        'browserify:scripts-coverage'
     ]);
 
     grunt.registerTask('scripts-dist', [
@@ -806,9 +842,17 @@ module.exports = function(grunt) {
         'scripts-tests',
         'concat:vendor-tests',
         'templates-tests',
-        'testem:run:simple',
+        'testem:run:dev',
     ]);
 
+
+    grunt.registerTask('coverage', [
+        'clean:coverage',
+        'scripts-coverage',
+        'concat:vendor-tests',
+        'templates-tests',
+        'testem:run:coverage',
+    ]);
 
     grunt.registerTask('default', [
         'dev',

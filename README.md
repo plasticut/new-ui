@@ -1,6 +1,12 @@
 new-ui
 =====================
 
+_start tests_:
+```
+grunt tests
+```
+
+
 _startup_:
 ```shell
 npm install -g bower grunt-cli

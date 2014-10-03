@@ -12,3 +12,5 @@ bower_components
 dist
 doc
 coverage.html
+/.project
+npm-debug.log

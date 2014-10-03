@@ -6,6 +6,12 @@ _start tests_:
 grunt tests
 ```
 
+_generate test coverage_:
+```
+grunt coverage
+```
+find report in coverage.html
+
 
 _startup_:
 ```shell

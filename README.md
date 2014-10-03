@@ -10,7 +10,7 @@ npm start
 
 _generate and serve api documentation_:
 ```shell
-npm docs
+grunt docs
 ```
 
 _start tests_:

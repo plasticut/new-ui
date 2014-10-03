@@ -34,7 +34,14 @@ module.exports = function(grunt) {
         }
     ];
 
-
+    var handlebarsOptions = {
+        namespace: false,
+        commonjs: true,
+        wrapped: true,
+        processName: function(filePath) {
+            return path.basename(path.relative('lib/ui/default/templates', filePath), '.hbs');
+        }
+    }
 
     var vendorScripts = [
         'bower_components/handlebars/handlebars.js',
@@ -166,7 +173,11 @@ module.exports = function(grunt) {
                     },
                     browserifyOptions: {
                         debug: true
-                    }
+                    },
+                    external: [
+                        'templates',
+                        'handlebars'
+                    ]
                 },
                 src: ['test/**/*.js'],
                 dest: '.tmp/test/bundle.js'
@@ -193,6 +204,19 @@ module.exports = function(grunt) {
                 },
                 src: [],
                 dest: '.tmp/js/templates.js'
+            },
+
+            'templates-tests': {
+                options: {
+                    browserifyOptions: {
+                        debug: true
+                    },
+                    alias: [
+                         __dirname + '/.tmp/test/templates.js:templates'
+                    ]
+                },
+                src: [],
+                dest: '.tmp/test/templates.js'
             },
 
             'templates-dist': {
@@ -395,14 +419,7 @@ module.exports = function(grunt) {
         */
         handlebars: {
             'templates-dev': {
-                options: {
-                    namespace: false,
-                    commonjs: true,
-                    wrapped: true,
-                    processName: function(filePath) {
-                        return path.basename(path.relative('lib/ui/default/templates', filePath), '.hbs');
-                    }
-                },
+                options: handlebarsOptions,
                 files: {
                     '.tmp/js/templates.js': [
                         'lib/ui/default/templates/**/*.hbs'
@@ -410,16 +427,17 @@ module.exports = function(grunt) {
                 }
             },
             'templates-dist': {
-                options: {
-                    namespace: false,
-                    commonjs: true,
-                    wrapped: true,
-                    processName: function(filePath) {
-                        return path.basename(path.relative('lib/ui/default/templates', filePath), '.hbs');
-                    }
-                },
+                options: handlebarsOptions,
                 files: {
                     'dist/public/js/templates.js': [
+                        'lib/ui/default/templates/**/*.hbs'
+                    ]
+                }
+            },
+            'templates-tests' :{
+                options: handlebarsOptions,
+                files:{
+                    '.tmp/test/templates.js': [
                         'lib/ui/default/templates/**/*.hbs'
                     ]
                 }
@@ -585,6 +603,7 @@ module.exports = function(grunt) {
                     'bower_components/chai/chai.js',
                     'bower_components/sinonjs/sinon.js',
                     '.tmp/test/vendor.js',
+                    '.tmp/test/templates.js',
                     '.tmp/test/bundle.js'
                 ],
                 options: {
@@ -594,7 +613,7 @@ module.exports = function(grunt) {
                             command: "node_modules/mocha-phantomjs/bin/mocha-phantomjs -R json-cov test/test-cov.html | node_modules/json2htmlcov/bin/json2htmlcov > coverage.html"
                         }
                     },
-                    launch_in_dev: ['Firefox', 'coverage'],
+                    launch_in_dev: ['chrome', 'coverage'],
                     launch_in_ci: ['Firefox']
                 }
             }
@@ -632,7 +651,7 @@ module.exports = function(grunt) {
         clean: {
             dist: [ 'dist/' ],
             dev: [ '.tmp/' ],
-            tests: ['.tmp/test/bundle.js', '.tmp/test/vendor.js', '.tmp/lib-cov/', 'coverage.html'],
+            tests: ['.tmp/test/', '.tmp/lib-cov/', 'coverage.html'],
         },
 
         connect: {
@@ -697,10 +716,8 @@ module.exports = function(grunt) {
 
 
     grunt.registerTask('scripts-tests', [
-        'clean:tests',
         'blanket',
-        'browserify:scripts-tests',
-        'concat:vendor-tests',
+        'browserify:scripts-tests'
     ]);
 
     grunt.registerTask('scripts-dist', [
@@ -731,6 +748,13 @@ module.exports = function(grunt) {
         'browserify:templates-dev',
         'jsbeautifier:templates-dev'
     ]);
+
+
+    grunt.registerTask('templates-tests', [
+        'handlebars:templates-tests',
+        'browserify:templates-tests'
+    ]);
+
 
     grunt.registerTask('templates-dist', [
         'handlebars:templates-dist',
@@ -778,7 +802,10 @@ module.exports = function(grunt) {
 
 
     grunt.registerTask('tests', [
+        'clean:tests',
         'scripts-tests',
+        'concat:vendor-tests',
+        'templates-tests',
         'testem:run:simple',
     ]);
 

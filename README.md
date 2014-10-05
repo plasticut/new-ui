@@ -10,7 +10,17 @@ npm start
 
 _generate and serve api documentation_:
 ```shell
-npm docs
+grunt docs
+```
+
+_start tests_:
+```
+grunt tests
+```
+
+_generate test coverage_:
+```
+grunt coverage #find report in coverage.html
 ```
 
 _components_:

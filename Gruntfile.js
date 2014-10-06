@@ -617,6 +617,7 @@ module.exports = function(grunt) {
                 src: [
                     'bower_components/chai/chai.js',
                     'bower_components/sinonjs/sinon.js',
+                    'bower_components/sinon-chai/lib/sinon-chai.js',
                     '.tmp/test/vendor.js',
                     '.tmp/test/templates.js',
                     '.tmp/test/bundle.js'

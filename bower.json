@@ -25,6 +25,7 @@
     "nicescroll": "*",
     "bootstrap": "~3.2.0",
     "chai": "^1.9.2",
-    "sinonjs": "~1.x.x"
+    "sinonjs": "~1.x.x",
+    "sinon-chai": "^2.6.0"
   }
 }

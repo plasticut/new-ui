@@ -1,5 +1,6 @@
 {
     "": "root.show",
     "login": "session.login",
-    "register": "session.register"
+    "register": "session.register",
+    "sample": "sample.index"
 }

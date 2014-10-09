@@ -11,3 +11,6 @@ bower_components
 .tmp
 dist
 doc
+coverage.html
+/.project
+npm-debug.log

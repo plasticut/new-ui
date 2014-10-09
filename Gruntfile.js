@@ -566,7 +566,11 @@ module.exports = function(grunt) {
                     livereload: '<%= server.livereload %>',
                     base: [
                         '.tmp'
-                    ]
+                    ],
+                    middleware: function(connect, options, middlewares) {
+                        middlewares.unshift(require('connect-pushstate/lib/pushstate').pushState('/index.html'));
+                        return middlewares;
+                    }
                 }
             },
             docs: {
